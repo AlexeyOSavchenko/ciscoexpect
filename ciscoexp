@@ -1,0 +1,18 @@
+#!/usr/bin/expect -f
+set login "admin"
+set pass [index $argv 0]
+set file [open "iplist.txt" r]
+set timeout 20
+log_file -noappend ./ciscossh.log
+while {[gets $file ip] >= 0} {
+spawn ssh $login@$ip
+expect "Password:"
+send "$pass\r"
+expect "*#"
+send "show version | include Model number\r"
+send "exit\r"
+expect eof
+puts "==============================================="
+}
+close $file
+
